@@ -50,7 +50,7 @@ class MySpider(scrapy.Spider):
 
         for movie_block in response.css('.bPTEEs'):
             # Extract ranking as a string containing digits only
-            ranking = ''.join(filter(str.isdigit, movie_block.css('span::text').get()))
+            ranking = movie_block.css('span::text').get()
             movie_link = movie_block.css('a::attr(href)').get()
 
             yield Request(
@@ -59,8 +59,7 @@ class MySpider(scrapy.Spider):
                 meta={'ranking': ranking}
             )
 
-    @staticmethod
-    def parse_movie(response):
+    def parse_movie(self, response):
         """
         Method Docstring:
         Parse method for extracting detailed information about a movie.
