@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <script src="../static/js/script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('homepage') }}">Accueil ></a>
+            <a href="{{ url_for('database_page') }}">Base de données ></a>
+            <a href="{{ url_for('map_page') }}">Carte ></a>
+            <a href="{{ url_for('analysis_page') }}">Analyse ></a>
+        </nav>
+    </header>
+
+    <h1>{% block h1 %}{% endblock %}</h1>
+
+    <div class="body">
+        <p>{% block body %}{% endblock %}</p>
+    </div>
+
+    <footer class="footer">
+        <!-- Logo ESIEE Paris -->
+        <img src="{{ url_for('static', filename='img/ESIEE_Paris_BLANC.png') }}" alt="logo_esiee"
+             class="logo">
+        <!-- Copyright -->
+        <div class="copyright">Copyright © 2024</div>
+        <!-- Credits -->
+        <div class="credits">
+            Réalisé Hugo CARANGEOT/Titouan CONTE-DEVOLX, encadrés par Monsieur Jérémy
+            SURGET/Monsieur William CARDOSO, cours de Monsieur Daniel COURIVAUD.
+        </div>
+        <!-- Unit -->
+        <a href="https://github.com/DataTrainingOrg/DataEngineerTools/tree/master" target="_blank">
+            <div class="unit">DSIA-4201C : DataEngineeringTools ></div>
+        </a>
+    </footer>
+</body>
+
+</html>

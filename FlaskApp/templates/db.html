@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{% block h1 %}
+    Base de données
+{% endblock %}{% endblock %}
+
+{% block body %}
+    <ul>
+        {% for entry in res %}
+        <li>
+            <strong>Title:</strong> {{ entry.title }}<br>
+            <strong>Ranking:</strong> {{ entry.ranking }}<br>
+            <strong>Genres:</strong> {{ entry.genres }}<br>
+            <strong>Director:</strong> {{ entry.director }}<br>
+            <strong>Duration:</strong> {{ entry.duration }}<br>
+            <strong>Publication Year:</strong> {{ entry.publication_year }}<br>
+            <strong>Native Countries:</strong> {{ entry.native_countries }}<br>
+            <img src="{{ entry.poster }}" alt="{{ entry.title }} Poster"><br>
+
+
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
