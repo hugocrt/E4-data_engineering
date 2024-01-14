@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{% block h1 %}
+    Base de données
+{% endblock %}{% endblock %}
+
+{% block body %}
+    <div class="searchbar">
+        {% if request.args.get('search_query') %}
+            <a href="{{ url_for('database_page', page=1, page_size=page_size) }}"
+               class="reset-button">Réinitialiser la recherche</a>
+        {% endif %}
+        <form action="{{ url_for('database_page') }}" method="GET">
+            <label for="search_query">Chercher un film:</label>
+            <input type="text" name="search_query" id="search_query" required>
+            <button type="submit">Recherche</button>
+        </form>
+
+        <p class="searchbar_label">{{ search_info }}</p>
+    </div>
+
+
+    <ul>
+        {% for entry in res %}
+            <li>
+                {% for key, value in entry.items() %}
+                    {% if key != 'poster' %}
+                        <strong>{{ key|capitalize }}:</strong> {{ value }}<br>
+                    {% endif %}
+                {% endfor %}
+                {% if 'poster' in entry %}
+                    <img src="{{ entry.poster }}" alt="{{ entry.title }} Poster"><br>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        {% if total_hits > page_size %}
+            <form action="{{ url_for('database_page') }}" method="GET" class="page-selector-form">
+                <label for="page-selector">Page:</label>
+                <select id="page-selector" name="page" onchange="this.form.submit()">
+                    {% set total_pages = (total_hits // page_size) + 1 %}
+                    {% set current_page = page %}
+
+                    {% for num in range(1, total_pages + 1) %}
+                        <option value="{{ num }}" {% if num == current_page %}selected{% endif %}>{{ num }}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="page_size" value="{{ page_size }}">
+                <input type="hidden" name="search_query" value="{{ request.args.get('search_query', '') }}">
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="navigation_buttons">
+        {% if page > 1 %}
+            <a href="{{ url_for('database_page', page=page-1, page_size=page_size, search_query=request.args.get('search_query')) }}">
+                <img src="{{ url_for('static', filename='img/previous-icon.png') }}" alt="Précédent"
+                     class="icon" />
+            </a>
+        {% endif %}
+        |
+        {% if (page - 1) * page_size + res|length < total_hits %}
+            <a href="{{ url_for('database_page', page=page+1, page_size=page_size, search_query=request.args.get('search_query')) }}">
+                 <img src="{{ url_for('static', filename='img/next-icon.png') }}" alt="Prochain"
+                      class="icon" />
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
