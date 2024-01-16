@@ -5,22 +5,76 @@
 {% endblock %}{% endblock %}
 
 {% block body %}
-    <div class="searchbar">
-        {% if request.args.get('search_query') %}
-            <a href="{{ url_for('database_page', page=1, page_size=page_size) }}"
-               class="reset-button">Réinitialiser la recherche</a>
-        {% endif %}
-        <form action="{{ url_for('database_page') }}" method="GET">
-            <label for="search_query">Chercher un film:</label>
-            <input type="text" name="search_query" id="search_query" required>
-            <button type="submit">Recherche</button>
-        </form>
 
-        <p class="searchbar_label">{{ search_info }}</p>
+<div class="top-filter">
+            <!-- Sorting -->
+    <div class="inline-dropdown">
+        <form id="sortingForm" action="{{ url_for('database_page') }}" method="GET">
+            <label for="sort_order">Trier par rang</label>
+            <select class="form-control" id="sort_order" name="sort_order">
+                <option value="asc" {% if request.args.get('sort_order') == 'asc' %}selected{% endif %}>Croissant</option>
+                <option value="desc" {% if request.args.get('sort_order') == 'desc' %}selected{% endif %}>Décroissant</option>
+            </select>
+
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="page" value="{{ page }}">
+            <input type="hidden" name="search_query" value="{{ request.args.get('search_query', '') }}">
+            <input type="hidden" name="min_year"
+                   value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
+            <input type="hidden" name="max_year"
+                   value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
+        </form>
     </div>
 
+        <!-- Year Range Filter -->
+    <div class="inline-dropdown">
+        <form id="yearRangeForm" action="{{ url_for('database_page') }}" method="GET">
+            <label for="min_year">De</label>
+                    <select class="form-control" id="min_year" name="min_year">
+                        {% for year in unique_fields[2]['publication_year'] %}
+                            <option value="{{ year }}" {% if request.args.get('min_year') == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+            <label for="max_year">à</label>
+                    <select class="form-control" id="max_year" name="max_year">
+                        {% for year in unique_fields[2]['publication_year'][::-1] %}
+                            <option value="{{ year }}" {% if request.args.get('max_year') == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="page" value="{{ page }}">
+            <input type="hidden" name="search_query" value="{{ request.args.get('search_query', '') }}">
+        </form>
+    </div>
+
+    <!-- Search Bar Filter -->
+    <div class="search-bar">
+        {% if request.args.get('search_query') %}
+            <a href="{{ url_for('database_page', page=1, page_size=page_size) }}" class="reset-button">Réinitialiser la recherche</a>
+        {% endif %}
+        <form action="{{ url_for('database_page') }}" method="GET" class="search-form">
+            <div class="form-group">
+                <label for="search_query">Rechercher un film</label>
+                <input type="text" name="search_query" id="search_query" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="search-button">
+                    <img src="{{ url_for('static', filename='img/search.png') }}" alt="Recherche" class="button">
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
 
 
+<div class="left-side-filter">
+
+</div>
+
+<div class="movies-wrapper">
+    <p class="search-info">{{ search_info }}</p>
     <ul>
         {% for entry in res %}
             <li>
@@ -35,11 +89,14 @@
             </li>
         {% endfor %}
     </ul>
+</div>
 
-    <div class="pagination">
+
+<div class="pagination">
+    <div class="page-selector">
         {% if total_hits > page_size %}
             <form action="{{ url_for('database_page') }}" method="GET" class="page-selector-form">
-                <label for="page-selector">Page:</label>
+                <label for="page-selector">Page</label>
                 <select id="page-selector" name="page" onchange="this.form.submit()">
                     {% set total_pages = (total_hits // page_size) + (1 if total_hits % page_size > 0 else 0) %}
                     {% set current_page = page %}
@@ -58,15 +115,16 @@
         {% if page > 1 %}
             <a href="{{ url_for('database_page', page=page-1, page_size=page_size, search_query=request.args.get('search_query')) }}">
                 <img src="{{ url_for('static', filename='img/previous-icon.png') }}" alt="Précédent"
-                     class="icon" />
+                     class="navigation_button" />
             </a>
         {% endif %}
         |
         {% if (page - 1) * page_size + res|length < total_hits %}
             <a href="{{ url_for('database_page', page=page+1, page_size=page_size, search_query=request.args.get('search_query')) }}">
                  <img src="{{ url_for('static', filename='img/next-icon.png') }}" alt="Prochain"
-                      class="icon" />
+                      class="navigation_button" />
             </a>
         {% endif %}
     </div>
+</div>
 {% endblock %}

@@ -15,15 +15,17 @@ def generate_data(documents):
         }
 
 
-def search_movies(index_name, query, page_size, page=1, asc_sort=True):
-    if query:
-        body_query = {"wildcard": {"title": {"value": f"*{query}*"}}}
-    else:
-        body_query = {"match_all": {}}
+def search_movies(index_name, title_query, page_size, page=1, sort_order=None, min_year=None,
+                  max_year=None):
+
+    body_query = {"wildcard": {"title": {"value": f"*{title_query}*"}}}
 
     from_value = (page - 1) * page_size
 
-    sort_order = "asc" if asc_sort else "desc"
+    range_filter = [{"range": {"publication_year": {"gte": min_year}}},
+                    {"range": {"publication_year": {"lte": max_year}}}]
+
+    body_query = {"bool": {"must": body_query, "filter": range_filter}}
 
     result = es.search(
         index=index_name,
@@ -37,7 +39,7 @@ def search_movies(index_name, query, page_size, page=1, asc_sort=True):
 
     hits = result['hits']['hits']
     total_hits = result['hits']['total']['value']
-    info = (f"{total_hits} film{'s' if total_hits > 1 else ''} correspondant à votre recherche '{query}' (~{result['took']}ms)")
+    info = (f"{total_hits} film{'s' if total_hits > 1 else ''} correspondant à votre recherche (~{result['took']}ms)")
     return hits, total_hits, info
 
 
@@ -50,11 +52,6 @@ def clear_es_client(es_client=es, index='movies'):
     response = es_client.delete_by_query(index=index, body=delete_query)
     es_client.indices.refresh(index=index)
     print(response)
-
-
-def get_indices_info(es_client):
-    indices_info = es_client.cat.indices(h="index,docs.count", format="json")
-    return indices_info
 
 
 def create_index(es_client, documents):
