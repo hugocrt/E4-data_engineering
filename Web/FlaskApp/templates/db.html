@@ -7,6 +7,14 @@
 {% block body %}
 
 <div class="top-filter">
+                <!-- Reset button -->
+    <div class="clear">
+        <label for="reset-button">Effacer les filtres</label>
+        <a href="{{ url_for('database_page') }}" id="reset-button">
+            <img src="{{ url_for('static', filename='img/clear_icon.png') }}" alt="" class="clear-button">
+        </a>
+    </div>
+
             <!-- Sorting -->
     <div class="inline-dropdown">
         <form id="sortingForm" action="{{ url_for('database_page') }}" method="GET">
@@ -15,14 +23,11 @@
                 <option value="asc" {% if request.args.get('sort_order') == 'asc' %}selected{% endif %}>Croissant</option>
                 <option value="desc" {% if request.args.get('sort_order') == 'desc' %}selected{% endif %}>Décroissant</option>
             </select>
-
-            <input type="hidden" name="page_size" value="{{ page_size }}">
             <input type="hidden" name="page" value="{{ page }}">
-            <input type="hidden" name="search_query" value="{{ request.args.get('search_query', '') }}">
-            <input type="hidden" name="min_year"
-                   value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
-            <input type="hidden" name="max_year"
-                   value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
+            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
         </form>
     </div>
 
@@ -41,31 +46,32 @@
                             <option value="{{ year }}" {% if request.args.get('max_year') == year %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
                     </select>
-
-            <input type="hidden" name="page_size" value="{{ page_size }}">
             <input type="hidden" name="page" value="{{ page }}">
-            <input type="hidden" name="search_query" value="{{ request.args.get('search_query', '') }}">
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+            <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
         </form>
     </div>
 
     <!-- Search Bar Filter -->
     <div class="search-bar">
-        {% if request.args.get('search_query') %}
-            <a href="{{ url_for('database_page', page=1, page_size=page_size) }}" class="reset-button">Réinitialiser la recherche</a>
-        {% endif %}
         <form action="{{ url_for('database_page') }}" method="GET" class="search-form">
             <div class="form-group">
-                <label for="search_query">Rechercher un film</label>
-                <input type="text" name="search_query" id="search_query" required>
+                <label for="title_query">Rechercher un film</label>
+                <input type="text" name="title_query" id="title_query" value="{{ request.args.get('title_query', '') }}">
             </div>
             <div class="form-group">
                 <button type="submit" class="search-button">
                     <img src="{{ url_for('static', filename='img/search.png') }}" alt="Recherche" class="button">
                 </button>
             </div>
+            <input type="hidden" name="page" value="{{ page }}">
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
+            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
+            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
         </form>
     </div>
-
 </div>
 
 
@@ -106,25 +112,26 @@
                     {% endfor %}
                 </select>
                 <input type="hidden" name="page_size" value="{{ page_size }}">
-                <input type="hidden" name="search_query" value="{{ request.args.get('search_query', '') }}">
+                <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+                <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
+                <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
+                <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
             </form>
         {% endif %}
     </div>
 
     <div class="navigation_buttons">
-        {% if page > 1 %}
-            <a href="{{ url_for('database_page', page=page-1, page_size=page_size, search_query=request.args.get('search_query')) }}">
-                <img src="{{ url_for('static', filename='img/previous-icon.png') }}" alt="Précédent"
-                     class="navigation_button" />
-            </a>
-        {% endif %}
-        |
-        {% if (page - 1) * page_size + res|length < total_hits %}
-            <a href="{{ url_for('database_page', page=page+1, page_size=page_size, search_query=request.args.get('search_query')) }}">
-                 <img src="{{ url_for('static', filename='img/next-icon.png') }}" alt="Prochain"
-                      class="navigation_button" />
-            </a>
-        {% endif %}
-    </div>
+    {% if page > 1 %}
+        <a href="{{ url_for('database_page') }}?{% for key, value in request.args.items() %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}&page={{ page-1 }}">
+            <img src="{{ url_for('static', filename='img/previous-icon.png') }}" alt="Précédent" class="navigation_button" />
+        </a>
+    {% endif %}
+    {% if (page - 1) * page_size + res|length < total_hits %}
+        <a href="{{ url_for('database_page') }}?{% for key, value in request.args.items() %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}&page={{ page+1 }}">
+            <img src="{{ url_for('static', filename='img/next-icon.png') }}" alt="Prochain" class="navigation_button" />
+        </a>
+    {% endif %}
+</div>
+
 </div>
 {% endblock %}

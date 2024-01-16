@@ -65,6 +65,16 @@ select {
   display: inline-block;
 }
 
+.clear {
+  display: flex;
+}
+
+.clear-button {
+  padding-left: 10px;
+  max-width: 20px;
+  max-height: 20px;
+}
+
 .content {
   min-height: 100vh;
 }

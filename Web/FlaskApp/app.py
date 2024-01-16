@@ -60,18 +60,16 @@ def homepage():
 
 @app.route('/db', methods=['GET'])
 def database_page():
-    page_request = request.args.get('page', default=1, type=int)
-    page_size = 5
     min_year = unique_fields[2]['publication_year'][0]
     max_year = unique_fields[2]['publication_year'][-1]
 
     min_year_request = request.args.get('min_year', default=f'{min_year}', type=str)
     max_year_request = request.args.get('max_year', default=f'{max_year}', type=str)
     sort_order_request = request.args.get('sort_order', default='asc', type=str)
+    page_request = request.args.get('page', default=1, type=int)
+    page_size = 5
 
-    print(max_year_request, min_year_request)
-
-    title_query = request.args.get('search_query', default='', type=str)
+    title_query = request.args.get('title_query', default='', type=str)
     search_params = {
         'title_query': title_query,
         'page_size': page_size,

@@ -27,6 +27,13 @@ def search_movies(index_name, title_query, page_size, page=1, sort_order=None, m
 
     body_query = {"bool": {"must": body_query, "filter": range_filter}}
 
+    print({
+            "query": body_query,
+            "from": from_value,
+            "sort": [{"ranking": {"order": sort_order}}],
+            "size": page_size,
+        })
+
     result = es.search(
         index=index_name,
         body={
