@@ -21,7 +21,8 @@ class TextPipeline(object):
 
 
 def to_numeric(string):
-    return ''.join(filter(str.isdigit, string))
+    res_str = ''.join(filter(str.isdigit, string))
+    return int(res_str)
 
 
 class MongoPipeline(object):

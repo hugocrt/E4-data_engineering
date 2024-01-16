@@ -20,6 +20,7 @@
     </div>
 
 
+
     <ul>
         {% for entry in res %}
             <li>
@@ -40,7 +41,7 @@
             <form action="{{ url_for('database_page') }}" method="GET" class="page-selector-form">
                 <label for="page-selector">Page:</label>
                 <select id="page-selector" name="page" onchange="this.form.submit()">
-                    {% set total_pages = (total_hits // page_size) + 1 %}
+                    {% set total_pages = (total_hits // page_size) + (1 if total_hits % page_size > 0 else 0) %}
                     {% set current_page = page %}
 
                     {% for num in range(1, total_pages + 1) %}
