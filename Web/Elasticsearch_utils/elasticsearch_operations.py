@@ -15,24 +15,50 @@ def generate_data(documents):
         }
 
 
-def search_movies(index_name, title_query, page_size, page=1, sort_order=None, min_year=None,
-                  max_year=None):
+def search_movies(index_name,
+                  title_query,
+                  page_size,
+                  page=1,
+                  sort_order=None,
+                  min_year=None,
+                  max_year=None,
+                  directors=None,
+                  genres=None,
+                  native_countries=None,
+                  min_duration=None,
+                  max_duration=None):
 
-    body_query = {"wildcard": {"title": {"value": f"*{title_query}*"}}}
+    # Base query for title search and date range
+    body_query = {
+        "bool": {
+            "must": {"wildcard": {"title": {"value": f"*{title_query}*"}}},
+            "filter": [
+                {"range": {"publication_year": {"gte": min_year}}},
+                {"range": {"publication_year": {"lte": max_year}}},
+            ]
+        }
+    }
+
+    # Add filter for directors if specified
+    if directors is not None and any(director.strip() for director in directors):
+        body_query['bool']['filter'].append({"terms": {"director.keyword": directors}})
+
+    # Add filter for genres if specified
+    if genres is not None and any(genre.strip() for genre in genres):
+        body_query['bool']['filter'].append({"terms": {"genres.keyword": genres}})
+
+    # Add filter for native countries if specified
+    if native_countries is not None and any(country.strip() for country in native_countries):
+        body_query['bool']['filter'].append({"terms": {"native_countries.keyword": native_countries}})
+
+    # Add filter for duration range if specified
+    if min_duration is not None:
+        body_query['bool']['filter'].append({"range": {"duration": {"gte": min_duration}}})
+
+    if max_duration is not None:
+        body_query['bool']['filter'].append({"range": {"duration": {"lte": max_duration}}})
 
     from_value = (page - 1) * page_size
-
-    range_filter = [{"range": {"publication_year": {"gte": min_year}}},
-                    {"range": {"publication_year": {"lte": max_year}}}]
-
-    body_query = {"bool": {"must": body_query, "filter": range_filter}}
-
-    print({
-            "query": body_query,
-            "from": from_value,
-            "sort": [{"ranking": {"order": sort_order}}],
-            "size": page_size,
-        })
 
     result = es.search(
         index=index_name,
@@ -46,7 +72,7 @@ def search_movies(index_name, title_query, page_size, page=1, sort_order=None, m
 
     hits = result['hits']['hits']
     total_hits = result['hits']['total']['value']
-    info = (f"{total_hits} film{'s' if total_hits > 1 else ''} correspondant à votre recherche (~{result['took']}ms)")
+    info = f"{total_hits} film{'s' if total_hits > 1 else ''} correspondant à votre recherche (~{result['took']}ms)"
     return hits, total_hits, info
 
 
@@ -68,6 +94,9 @@ def create_index(es_client, documents):
         "mappings": {
             "properties": {
                 "ranking": {
+                    "type": "integer"
+                },
+                "duration": {
                     "type": "integer"
                 }
             }

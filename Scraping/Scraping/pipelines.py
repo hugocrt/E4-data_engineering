@@ -11,18 +11,21 @@ import pymongo
 
 
 class TextPipeline(object):
-
     def process_item(self, item, spider):
         if item['ranking']:
             item['ranking'] = to_numeric(item['ranking'])
-            return item
-        else:
-            raise DropItem(f'Not a valid ranking in {item}')
+        if item['duration']:
+            item['duration'] = hours_to_min(item['duration'])
+        return item
 
 
 def to_numeric(string):
     res_str = ''.join(filter(str.isdigit, string))
     return int(res_str)
+
+
+def hours_to_min(string):
+    return sum(to_numeric(part) * (60 if 'min' not in part else 1) for part in string.split('h'))
 
 
 class MongoPipeline(object):

@@ -1,3 +1,4 @@
+from unidecode import unidecode
 from flask import Flask, render_template, request
 from flask_pymongo import PyMongo
 from ..Elasticsearch_utils.elasticsearch_operations import *
@@ -31,15 +32,36 @@ def retrieve_unique_fields(collection):
     # Get distinct values for each field
     unique_fields = {field: collection.distinct(field) for field in fields_to_check}
 
-    # Convert unique fields to list format
     unique_data_list = [
-        {field: list(values)} for field, values in unique_fields.items() if values and all(value is not None for value in values)
+        {
+            'Réalisateurs' if field == 'director' else (
+                'Genres' if field == 'genres' else (
+                    'Pays de production' if field == 'native_countries' else field)
+            ): (
+                sorted(
+                    [value for value in values if value is not None],
+                    key=lambda x: unidecode(x) if not isinstance(x, int) else x
+                )
+            )
+        }
+        for field, values in unique_fields.items()
+        if values is not None
     ]
+
+    native_countries_data = next((item for item in unique_data_list if 'Pays de production' in item),
+                                 None)
+    if native_countries_data:
+        unique_data_list.remove(native_countries_data)
+        unique_data_list.insert(2, native_countries_data)
 
     return unique_data_list
 
 
 def launch_es(es_client, collection):
+    # if es_client.indices.exists(index='movies'):
+    #     # Delete the index
+    #     es_client.indices.delete(index='movies')
+    #     return
     clear_es_client(es_client)
     data = retrieve_mongo_data(collection)
     create_index(es_client, data)
@@ -60,24 +82,36 @@ def homepage():
 
 @app.route('/db', methods=['GET'])
 def database_page():
-    min_year = unique_fields[2]['publication_year'][0]
-    max_year = unique_fields[2]['publication_year'][-1]
-
-    min_year_request = request.args.get('min_year', default=f'{min_year}', type=str)
-    max_year_request = request.args.get('max_year', default=f'{max_year}', type=str)
+    title_request = request.args.get('title_query', default='', type=str)
+    native_countries_request = request.args.getlist('Pays de production')
+    min_duration_request = request.args.get('min_duration', type=str)
+    max_duration_request = request.args.get('max_duration', type=str)
+    directors_request = request.args.getlist('Réalisateurs')
+    genres_request = request.args.getlist('Genres')
+    min_year_request = request.args.get('min_year', type=str)
+    max_year_request = request.args.get('max_year', type=str)
     sort_order_request = request.args.get('sort_order', default='asc', type=str)
     page_request = request.args.get('page', default=1, type=int)
-    page_size = 5
 
-    title_query = request.args.get('title_query', default='', type=str)
+    page_size = 30
+
     search_params = {
-        'title_query': title_query,
+        'title_query': title_request,
         'page_size': page_size,
         'page': page_request,
         'min_year': min_year_request,
         'max_year': max_year_request,
         'sort_order': sort_order_request,
+        'directors': directors_request,
+        'genres': genres_request,
+        'native_countries': native_countries_request,
+        'min_duration': min_duration_request,
+        'max_duration': max_duration_request
     }
+
+    print(type(str(min_duration_request)))
+    for value in unique_fields[-1]['publication_year']:
+        print(type(value))
 
     hits, total_hits, info = search_movies('movies', **search_params)
 

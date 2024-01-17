@@ -9,7 +9,7 @@
 <div class="top-filter">
                 <!-- Reset button -->
     <div class="clear">
-        <label for="reset-button">Effacer les filtres</label>
+        <label for="reset-button">Effacer tous les filtres</label>
         <a href="{{ url_for('database_page') }}" id="reset-button">
             <img src="{{ url_for('static', filename='img/clear_icon.png') }}" alt="" class="clear-button">
         </a>
@@ -23,33 +23,71 @@
                 <option value="asc" {% if request.args.get('sort_order') == 'asc' %}selected{% endif %}>Croissant</option>
                 <option value="desc" {% if request.args.get('sort_order') == 'desc' %}selected{% endif %}>Décroissant</option>
             </select>
-            <input type="hidden" name="page" value="{{ page }}">
-            <input type="hidden" name="page_size" value="{{ page_size }}">
             <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
-            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
-            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="page" value="{{ page }}">
+            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[-1]['publication_year'][0]) }}">
+            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[-1]['publication_year'][-1]) }}">
+            <input type="hidden" name="Réalisateurs" {% for value in request.args.getlist('Réalisateurs') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Genres" {% for value in request.args.getlist('Genres') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Pays de production" {% for value in request.args.getlist('Pays de production') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="min_duration" value="{{ request.args.get('min_duration', unique_fields[3]['duration'][0]) }}">
+            <input type="hidden" name="max_duration" value="{{ request.args.get('max_duration', unique_fields[3]['duration'][-1]) }}">
         </form>
     </div>
 
         <!-- Year Range Filter -->
     <div class="inline-dropdown">
         <form id="yearRangeForm" action="{{ url_for('database_page') }}" method="GET">
-            <label for="min_year">De</label>
+            <label for="min_year">Année</label>
                     <select class="form-control" id="min_year" name="min_year">
-                        {% for year in unique_fields[2]['publication_year'] %}
+                        {% for year in unique_fields[-1]['publication_year'] %}
                             <option value="{{ year }}" {% if request.args.get('min_year') == year %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
                     </select>
             <label for="max_year">à</label>
                     <select class="form-control" id="max_year" name="max_year">
-                        {% for year in unique_fields[2]['publication_year'][::-1] %}
+                        {% for year in unique_fields[-1]['publication_year'][::-1] %}
                             <option value="{{ year }}" {% if request.args.get('max_year') == year %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
                     </select>
-            <input type="hidden" name="page" value="{{ page }}">
-            <input type="hidden" name="page_size" value="{{ page_size }}">
             <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="page" value="{{ page }}">
             <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
+            <input type="hidden" name="Réalisateurs" {% for value in request.args.getlist('Réalisateurs') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Genres" {% for value in request.args.getlist('Genres') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Pays de production" {% for value in request.args.getlist('Pays de production') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="min_duration" value="{{ request.args.get('min_duration', unique_fields[3]['duration'][0]) }}">
+            <input type="hidden" name="max_duration" value="{{ request.args.get('max_duration', unique_fields[3]['duration'][-1]) }}">
+        </form>
+    </div>
+
+            <!-- Duration Range Filter -->
+    <div class="inline-dropdown">
+        <form id="durationRangeForm" action="{{ url_for('database_page') }}" method="GET">
+            <label for="min_duration">Durée</label>
+                    <select class="form-control" id="min_duration" name="min_duration">
+                        {% for duration in unique_fields[3]['duration'] %}
+                            <option value="{{ duration }}" {% if request.args.get('min_duration') == duration|string %}selected{% endif %}>{{ duration }}</option>
+                        {% endfor %}
+                    </select>
+            <label for="max_duration">à</label>
+                    <select class="form-control" id="max_duration" name="max_duration">
+                        {% for duration in unique_fields[3]['duration'][::-1] %}
+                            <option value="{{ duration }}" {% if request.args.get('max_duration') == duration|string %}selected{% endif %}>{{ duration }}</option>
+                        {% endfor %}
+                    </select>
+            <label for="max_duration">min</label>
+            <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+            <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="page" value="{{ page }}">
+            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[-1]['publication_year'][0]) }}">
+            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[-1]['publication_year'][-1]) }}">
+            <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
+            <input type="hidden" name="Réalisateurs" {% for value in request.args.getlist('Réalisateurs') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Genres" {% for value in request.args.getlist('Genres') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Pays de production" {% for value in request.args.getlist('Pays de production') %}value="{{ value }}"{% endfor %}>
         </form>
     </div>
 
@@ -65,37 +103,88 @@
                     <img src="{{ url_for('static', filename='img/search.png') }}" alt="Recherche" class="button">
                 </button>
             </div>
-            <input type="hidden" name="page" value="{{ page }}">
             <input type="hidden" name="page_size" value="{{ page_size }}">
+            <input type="hidden" name="page" value="{{ page }}">
+            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[-1]['publication_year'][0]) }}">
+            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[-1]['publication_year'][-1]) }}">
             <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
-            <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
-            <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
+            <input type="hidden" name="Réalisateurs" {% for value in request.args.getlist('Réalisateurs') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Genres" {% for value in request.args.getlist('Genres') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="Pays de production" {% for value in request.args.getlist('Pays de production') %}value="{{ value }}"{% endfor %}>
+            <input type="hidden" name="min_duration" value="{{ request.args.get('min_duration', unique_fields[3]['duration'][0]) }}">
+            <input type="hidden" name="max_duration" value="{{ request.args.get('max_duration', unique_fields[3]['duration'][-1]) }}">
         </form>
     </div>
 </div>
 
 
-<div class="left-side-filter">
+<div class="main-content">
+    <div class="left-side-filter">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h1>Filtres avancés</h1>
+                </div>
+                <form action="{{ url_for('database_page') }}" method="GET" id="leftFilterForm">
+                    <button type="submit" id="submitAllButton" class="modern-button">Appliquer</button>
+                    {% for section in unique_fields[:3] %}
+                        {% for key, values in section.items() %}
+                            <div class="menu-section" id="{{ key }}">
+                                <div class="section-header" onclick="toggleSection('{{ key }}')">
+                                    {{ key }}
+                                    <span class="arrow">v</span>
+                                </div>
+                                <div class="section-content">
+                                    {% for value in values %}
+                                        <label>
+                                            <input type="checkbox" name="{{ key }}" value="{{ value }}" {% if value in request.args.getlist(key) %}checked{% endif %}>
+                                            {{ value }}
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+                    <input type="hidden" name="page_size" value="{{ page_size }}">
+                    <input type="hidden" name="page" value="{{ page }}">
+                    <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[-1]['publication_year'][0]) }}">
+                    <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[-1]['publication_year'][-1]) }}">
+                    <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
+                    <input type="hidden" name="min_duration" value="{{ request.args.get('min_duration', unique_fields[3]['duration'][0]) }}">
+                    <input type="hidden" name="max_duration" value="{{ request.args.get('max_duration', unique_fields[3]['duration'][-1]) }}">
+                </form>
+            </div>
+        </div>
+    </div>
 
+    <div class="movies-wrapper">
+        <p class="search-info">{{ search_info }}</p>
+        <div class="card-group">
+            {% for film in res %}
+                <div class="card">
+                    <div class="card-img">
+                        <img src="{{ film.poster }}" alt="{{ film.title }} Poster">
+                    </div>
+
+                    <div class="card-body">
+                        <h1 class="card-title">
+                            {{film.title}}
+                        </h1>
+                        <p class="card-intro">
+                            {% for key, value in film.items() %}
+                                {% if key != 'poster' and key != 'title'%}
+                                    <strong>{{ key|capitalize }}:</strong> {{ value }}<br>
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
-<div class="movies-wrapper">
-    <p class="search-info">{{ search_info }}</p>
-    <ul>
-        {% for entry in res %}
-            <li>
-                {% for key, value in entry.items() %}
-                    {% if key != 'poster' %}
-                        <strong>{{ key|capitalize }}:</strong> {{ value }}<br>
-                    {% endif %}
-                {% endfor %}
-                {% if 'poster' in entry %}
-                    <img src="{{ entry.poster }}" alt="{{ entry.title }} Poster"><br>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</div>
 
 
 <div class="pagination">
@@ -111,11 +200,16 @@
                         <option value="{{ num }}" {% if num == current_page %}selected{% endif %}>{{ num }}</option>
                     {% endfor %}
                 </select>
-                <input type="hidden" name="page_size" value="{{ page_size }}">
                 <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
+                <input type="hidden" name="page_size" value="{{ page_size }}">
+                <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[-1]['publication_year'][0]) }}">
+                <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[-1]['publication_year'][-1]) }}">
                 <input type="hidden" name="sort_order" value="{{ request.args.get('sort_order', 'asc') }}">
-                <input type="hidden" name="min_year" value="{{ request.args.get('min_year', unique_fields[2]['publication_year'][0]) }}">
-                <input type="hidden" name="max_year" value="{{ request.args.get('max_year', unique_fields[2]['publication_year'][-1]) }}">
+                <input type="hidden" name="Réalisateurs" {% for value in request.args.getlist('Réalisateurs') %}value="{{ value }}"{% endfor %}>
+                <input type="hidden" name="Genres" {% for value in request.args.getlist('Genres') %}value="{{ value }}"{% endfor %}>
+                <input type="hidden" name="Pays de production" {% for value in request.args.getlist('Pays de production') %}value="{{ value }}"{% endfor %}>
+                <input type="hidden" name="min_duration" value="{{ request.args.get('min_duration', unique_fields[3]['duration'][0]) }}">
+                <input type="hidden" name="max_duration" value="{{ request.args.get('max_duration', unique_fields[3]['duration'][-1]) }}">
             </form>
         {% endif %}
     </div>
