@@ -28,14 +28,10 @@ def search_movies(index_name,
                   min_duration=None,
                   max_duration=None):
 
-    # Base query for title search and date range
     body_query = {
         "bool": {
             "must": {"wildcard": {"title": {"value": f"*{title_query}*"}}},
-            "filter": [
-                {"range": {"publication_year": {"gte": min_year}}},
-                {"range": {"publication_year": {"lte": max_year}}},
-            ]
+            "filter": []
         }
     }
 
@@ -52,14 +48,29 @@ def search_movies(index_name,
         body_query['bool']['filter'].append({"terms": {"native_countries.keyword": native_countries}})
 
     # Add filter for duration range if specified
-    if min_duration is not None:
+    if min_duration != '':
+        print('min dur')
         body_query['bool']['filter'].append({"range": {"duration": {"gte": min_duration}}})
 
-    if max_duration is not None:
+    if max_duration != '':
+        print('max dur')
         body_query['bool']['filter'].append({"range": {"duration": {"lte": max_duration}}})
 
-    from_value = (page - 1) * page_size
+    if min_year != '':
+        print('min year')
+        body_query['bool']['filter'].append({"range": {"publication_year": {"gte": min_year}}})
 
+    if max_year != '':
+        print('max year')
+        body_query['bool']['filter'].append({"range": {"publication_year": {"lte": max_year}}})
+
+    from_value = (page - 1) * page_size
+    print({
+            "query": body_query,
+            "from": from_value,
+            "sort": [{"ranking": {"order": sort_order}}],
+            "size": page_size,
+        })
     result = es.search(
         index=index_name,
         body={

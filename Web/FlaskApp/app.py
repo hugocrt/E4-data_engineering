@@ -84,12 +84,12 @@ def homepage():
 def database_page():
     title_request = request.args.get('title_query', default='', type=str)
     native_countries_request = request.args.getlist('Pays de production')
-    min_duration_request = request.args.get('min_duration', type=str)
-    max_duration_request = request.args.get('max_duration', type=str)
+    min_duration_request = request.args.get('min_duration', default='', type=str)
+    max_duration_request = request.args.get('max_duration', default='', type=str)
     directors_request = request.args.getlist('Réalisateurs')
     genres_request = request.args.getlist('Genres')
-    min_year_request = request.args.get('min_year', type=str)
-    max_year_request = request.args.get('max_year', type=str)
+    min_year_request = request.args.get('min_year', default='', type=str)
+    max_year_request = request.args.get('max_year', default='', type=str)
     sort_order_request = request.args.get('sort_order', default='asc', type=str)
     page_request = request.args.get('page', default=1, type=int)
 
@@ -108,17 +108,13 @@ def database_page():
         'min_duration': min_duration_request,
         'max_duration': max_duration_request
     }
-
-    print(type(str(min_duration_request)))
-    for value in unique_fields[-1]['publication_year']:
-        print(type(value))
-
-    hits, total_hits, info = search_movies('movies', **search_params)
+    print(search_params)
+    hits, total_hits, search_info = search_movies('movies', **search_params)
 
     movie_data_list = [{key: value for key, value in hit['_source'].items()} for hit in hits]
     render_params = {
-        'res': movie_data_list,
-        'search_info': info,
+        'movie_data_list': movie_data_list,
+        'search_info': search_info,
         'page': page_request,
         'page_size': page_size,
         'total_hits': total_hits,
