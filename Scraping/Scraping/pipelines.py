@@ -16,6 +16,8 @@ class TextPipeline(object):
             item['ranking'] = to_numeric(item['ranking'])
         if item['duration']:
             item['duration'] = hours_to_min(item['duration'])
+        if item['publication_year']:
+            item['publication_year'] = to_numeric(item['publication_year'])
         return item
 
 

@@ -1,9 +1,5 @@
-from .elasticsearch_setup import es
+from .elasticsearch_setup import es_client
 from elasticsearch.helpers import bulk
-
-
-template_name = "ranking_template"
-template_path = "static/ranking_template.json"
 
 
 def generate_data(documents):
@@ -15,90 +11,74 @@ def generate_data(documents):
         }
 
 
-def search_movies(index_name,
-                  title_query,
-                  page_size,
-                  page=1,
-                  sort_order=None,
-                  min_year=None,
-                  max_year=None,
-                  directors=None,
-                  genres=None,
-                  native_countries=None,
-                  min_duration=None,
-                  max_duration=None):
+def count_per_field(field):
+    mapping = es_client.indices.get_mapping(index='movies')
+    field_type = mapping['movies']['mappings']['properties'].get(field, {}).get('type', None)
+    if field_type == 'text':
+        field_to_search = f"{field}.keyword"
+    else:
+        field_to_search = field
+
+    query = {
+        "size": 0,  # Utilisez 0 pour ne pas récupérer de documents, seulement les agrégations
+        "aggs": {
+            "counts": {
+                "terms": {
+                    "field": field_to_search,
+                    "size": 10000
+                }
+            }
+        }
+    }
+    result = es_client.search(index='movies', body=query)
+    buckets = result['aggregations']['counts'].get('buckets', [])
+    field_count_dict = {bucket['key']: bucket['doc_count'] for bucket in buckets}
+
+    return field_count_dict
+
+
+def search_movies(index_name, filters, page, page_size, order):
 
     body_query = {
         "bool": {
-            "must": {"wildcard": {"title": {"value": f"*{title_query}*"}}},
+            "must": {"wildcard": {"title": {"value": f"*{filters.title}*"}}},
             "filter": []
         }
     }
 
-    # Add filter for directors if specified
-    if directors is not None and any(director.strip() for director in directors):
-        body_query['bool']['filter'].append({"terms": {"director.keyword": directors}})
-
-    # Add filter for genres if specified
-    if genres is not None and any(genre.strip() for genre in genres):
-        body_query['bool']['filter'].append({"terms": {"genres.keyword": genres}})
-
-    # Add filter for native countries if specified
-    if native_countries is not None and any(country.strip() for country in native_countries):
-        body_query['bool']['filter'].append({"terms": {"native_countries.keyword": native_countries}})
-
-    # Add filter for duration range if specified
-    if min_duration != '':
-        print('min dur')
-        body_query['bool']['filter'].append({"range": {"duration": {"gte": min_duration}}})
-
-    if max_duration != '':
-        print('max dur')
-        body_query['bool']['filter'].append({"range": {"duration": {"lte": max_duration}}})
-
-    if min_year != '':
-        print('min year')
-        body_query['bool']['filter'].append({"range": {"publication_year": {"gte": min_year}}})
-
-    if max_year != '':
-        print('max year')
-        body_query['bool']['filter'].append({"range": {"publication_year": {"lte": max_year}}})
+    filters_fields = [f for f in dir(filters) if not f.startswith('__') and f != 'title']
+    for field in filters_fields:
+        filter_value = getattr(filters, field)
+        if field.startswith("min_") or field.startswith("max_"):
+            if filter_value != '':
+                body_query['bool']['filter'].append(
+                    {"range":
+                        {field[4:]: {"gte" if field.startswith("min_") else "lte": filter_value}}
+                     }
+                )
+        elif filter_value is not None and any(item.strip() for item in filter_value):
+            body_query['bool']['filter'].append({"terms": {field+".keyword": filter_value}})
 
     from_value = (page - 1) * page_size
-    print({
-            "query": body_query,
-            "from": from_value,
-            "sort": [{"ranking": {"order": sort_order}}],
-            "size": page_size,
-        })
-    result = es.search(
+
+    result = es_client.search(
         index=index_name,
         body={
             "query": body_query,
             "from": from_value,
-            "sort": [{"ranking": {"order": sort_order}}],
+            "sort": [{"ranking": {"order": order}}],
             "size": page_size,
         }
     )
 
     hits = result['hits']['hits']
     total_hits = result['hits']['total']['value']
-    info = f"{total_hits} film{'s' if total_hits > 1 else ''} correspondant à votre recherche (~{result['took']}ms)"
+    info = (f"{total_hits} film{'s' if total_hits > 1 else ''} "
+            f"correspondant à votre recherche (~{result['took']}ms)")
     return hits, total_hits, info
 
 
-def clear_es_client(es_client=es, index='movies'):
-    delete_query = {
-        "query": {
-            "match_all": {}
-        }
-    }
-    response = es_client.delete_by_query(index=index, body=delete_query)
-    es_client.indices.refresh(index=index)
-    print(response)
-
-
-def create_index(es_client, documents):
+def create_index(es, documents):
     index_name = "movies"
 
     template_body = {
@@ -109,19 +89,23 @@ def create_index(es_client, documents):
                 },
                 "duration": {
                     "type": "integer"
+                },
+                "publication_year": {
+                    "type": "integer"
                 }
             }
         }
     }
 
     try:
-        if not es.indices.exists(index=index_name):
-            es_client.indices.create(index=index_name, body=template_body)
+        if es.indices.exists(index=index_name):
+            es.indices.delete(index=index_name)
 
-        response = bulk(es_client, generate_data(documents))
-        print(response)
+        else:
+            es.indices.create(index=index_name, body=template_body)
 
-        es_client.indices.refresh(index=index_name)
+        bulk(es, generate_data(documents))
+        es.indices.refresh(index=index_name)
 
     except Exception as e:
         print(f"Error during index creation or bulk indexing: {e}")

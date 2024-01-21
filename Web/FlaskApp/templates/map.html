@@ -4,3 +4,65 @@
     Carte
 {% endblock %}{% endblock %}
 
+{% block body %}
+
+<div class="main-content">
+    <div class="map">
+        <div class="map-title">
+            Nombre de films par pays
+        </div>
+         <div class="map-display">
+            {{ folium_map|safe }}
+        </div>
+        <div class="map-text">
+            <div class="bottom-legend">
+                <p>Utilisation d'une échelle quadratique pour la distribution des couleurs</p>
+            </div>
+            <div class="map-description">
+                <h1 class="card-title">Analyse rapide</h1>
+                <p>Dans ce top des 1000 "meilleurs" films, les États-Unis occupent une
+                    position dominante avec 421 films,
+                    ce qui n'est pas surprenant étant donné l'influence prépondérante de l'industrie cinématographique américaine à
+                    l'échelle mondiale. Hollywood, en tant que berceau du cinéma, a produit une multitude de réalisateurs, acteurs et
+                    œuvres qui ont façonné l'histoire du cinéma.</p>
+                <p> La France se classe en deuxième position avec 169 films, ce qui témoigne
+                    de son riche héritage cinématographique.
+                    Des mouvements comme la Nouvelle Vague ont eu un impact majeur, et des réalisateurs tels que Jean-Luc Godard et François Truffaut
+                    ont laissé une empreinte durable sur l'art cinématographique.</p>
+                <p> Le Royaume-Uni, avec 68 films, maintient une présence significative
+                    grâce à son industrie cinématographique bien établie et une
+                    histoire cinématographique variée. Des classiques du cinéma britannique, du Hammer Horror aux films de Ken Loach, contribuent à cette
+                    représentation.</p>
+                <p> Les autres pays, bien que moins représentés individuellement, ajoutent
+                    collectivement à la diversité culturelle de la liste. L'Allemagne, l'Union Soviétique
+                    (avec un héritage cinématographique persistant), la Suède, l'Espagne, la Chine, l'Inde, et Taïwan, parmi d'autres,
+                    témoignent de la richesse globale du cinéma mondial. </p>
+                <p> En résumé, la liste reflète à la fois la prédominance incontestée des cinq
+                    premiers pays (USA, FR, UK, IT, JPN) et la diversité culturelle apportée par les autres
+                    nations cinématographiques. On notera tout de même que cela ne représente
+                    au total que grossièrement un quart des nations.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {% for pays, count in info.items()%}
+                <div class="info-item">
+                    <div class="info-color" style="background-color: {{ country_colors[pays] }};"></div>
+                    <div class="info-key">
+                        {{ pays }}
+                    </div>
+                    <div class="info-value">
+                        {{ count }}
+                    </div>
+                    <br>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

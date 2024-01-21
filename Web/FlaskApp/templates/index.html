@@ -5,12 +5,70 @@
 {% endblock %}{% endblock %}
 
 {% block body %}
-    Salut tout le monde !
-    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">
-            <div class="rickrolled">Cliquez ici !></div>
-    </a>
-    <a href="https://www.senscritique.com/liste/les_1000_plus_grands_films_de_tous_les_temps_they_shoot_pict/2794779" target="_blank">
-            <div>senscritique></div>
-    </a>
 
+<div class="card-group">
+    <div class="big-card">
+        <div class="card-body">
+            <h1 class="card-title">⚠ AVERTISSEMENTS ⚠</h1>
+            <div class="card-intro">
+                <p>
+                    <br>
+                    - Nous <b>certifions</b> sur notre honneur qu'il n'y a <b>pas eu de plagiat</b>, le
+                    site a entièrement été réalisé par nos soins. Vous pouvez retrouver <b>plus
+                    d'informations</b> nous concernant dans la <b>description</b>.<br>
+                    Nous avons utilisé le <b>cours présenté dans le footer</b> pour parvenir à
+                    nos fins. Néanmoins, une <b>partie du css a été très fortement inspirée de cette</b>
+                    <a href="https://www.youtube.com/watch?v=Segpm1tY8qA&t=64s" target="_blank">vidéo</a>.
+                    <br><br>
+                    - Les données ont été récupérées sur
+                        <a href="https://www.senscritique.com/liste/les_1000_plus_grands_films_de_tous_les_temps_they_shoot_pict/2794779" target="_blank">senscritique</a>.
+                    <br><br>
+                    - Ce <b>top 1000</b> n'est pas issu d'un classement officiel, il est ainsi subjectif et a
+                    été réalisé par <i>Sergent_Pepper</i>.
+
+                    Il est donc important de prendre en compte que nos analyses seront portées sur
+                    les goûts de quelqu'un. On étudie donc ce que ce spectateur consomme en termes de
+                    films et l'on pourrait ainsi lui proposer des suggestions (ce n'est pas l'objet de
+                    l'étude ici).
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="big-card">
+        <div class="card-body">
+            <h1 class="card-title">Explications rapides</h1>
+            <div class="card-intro">
+                <p>
+                    <br>
+                    - Consultez notre <b>README</b> (disponible sur <a href="https://github.com/hugocrt/data_engineering_e4_project" target="_blank">GIT</a>)
+                    pour plus de détails.
+                    <br><br>
+                    - Vous retrouvez sur les pages <a href="{{ url_for('map_page') }}">Carte</a> et
+                    <a href="{{ url_for('map_page') }}">Analyse</a> des <b>analyses rapides</b>
+                    liées aux élements.
+                    <br><br>
+                    - Nos données sont récupérées grâce à <b>Scrapy</b>, et sont stockées sur une
+                    <b>base de données Mongo</b>.
+                    <br><br>
+                    - Vous disposez d'un <b>moteur de recherche</b> (comme sur un site de commerce en
+                    ligne) sur la page <a href="{{ url_for('database_page') }}">Base de
+                    données</a>, il repose sur <b>ElasticSearch</b>.<br>
+                    Celui-ci, vous permet d'afficher, selon plusieurs caractéristiques (en même
+                    temps), les films présents dans la <b>base de données Mongo</b>. Vous pouvez également
+                    trier les résultats par ordre croissant et décroissant (rang). De plus, nous
+                    avons mis en place un système de pages lorsqu'il y a trop de films. Vous pouvez
+                    naviguer librement grâce à un menu déroulant et/ou grâce à des boutons présents
+                    bas de page. <span style="color : #45a049; font-weight: bold">Bonne
+                    exploration ٩(^ᴗ^)۶</span>
+                    <br><br>
+                    - Vous disposez d'une <b>visualisation géographique</b> du nombre de films
+                    présents dans ce top par pays sur la page <a href="{{ url_for('map_page') }}">Carte</a>.
+                    <br><br>
+                    - Enfin, vous disposez d'une <b>analyse</b> de données et de plus de détails sur
+                    ce qu'on peut apprendre sur la page <a href="{{ url_for('map_page') }}">Analyse</a> !
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

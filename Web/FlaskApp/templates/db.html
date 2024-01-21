@@ -42,13 +42,13 @@
             <label for="min_year">Année</label>
                     <select class="form-control" id="min_year" name="min_year">
                         {% for year in unique_fields[-1]['publication_year'] %}
-                            <option value="{{ year }}" {% if request.args.get('min_year') == year %}selected{% endif %}>{{ year }}</option>
+                            <option value="{{ year }}" {% if request.args.get('min_year') == year|string %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
                     </select>
             <label for="max_year">à</label>
                     <select class="form-control" id="max_year" name="max_year">
                         {% for year in unique_fields[-1]['publication_year'][::-1] %}
-                            <option value="{{ year }}" {% if request.args.get('max_year') == year %}selected{% endif %}>{{ year }}</option>
+                            <option value="{{ year }}" {% if request.args.get('max_year') == year|string %}selected{% endif %}>{{ year }}</option>
                         {% endfor %}
                     </select>
             <input type="hidden" name="title_query" value="{{ request.args.get('title_query', '') }}">
@@ -159,7 +159,7 @@
     </div>
 
     <div class="movies-wrapper">
-        <p class="search-info">{{ search_info }}</p>
+        <p class="search-info">{{ search_details }}</p>
         <div class="card-group">
             {% for film in movie_data_list %}
                 <div class="card">
@@ -220,7 +220,7 @@
             <img src="{{ url_for('static', filename='img/previous-icon.png') }}" alt="Précédent" class="navigation_button" />
         </a>
     {% endif %}
-    {% if (page - 1) * page_size + res|length < total_hits %}
+    {% if page * page_size < total_hits %}
         <a href="{{ url_for('database_page') }}?{% for key, value in request.args.items() %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}&page={{ page+1 }}">
             <img src="{{ url_for('static', filename='img/next-icon.png') }}" alt="Prochain" class="navigation_button" />
         </a>

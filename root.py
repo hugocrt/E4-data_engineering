@@ -1,3 +1,3 @@
-from Web.FlaskApp import app
+from Web.FlaskApp import routes
 
-app.app.run(debug=True)
+routes.app.run(debug=True)

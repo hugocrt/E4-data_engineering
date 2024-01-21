@@ -4,6 +4,12 @@ a {
   color: #0097d7;
   text-decoration: none;
   transition: transform 0.2s ease;
+    font-weight: bold;
+}
+
+p {
+    color: dimgrey;
+    text-align: justify;
 }
 
 a:hover {
@@ -53,7 +59,7 @@ h1 {
   margin-top: 10px;
   text-align: center;
   font-weight: bold;
-  color: #555 ;
+  color: #0097d7 ;
 }
 
 select {
@@ -263,10 +269,10 @@ select {
     overflow: hidden;
 }
 
-.card {
+.card,
+.big-card {
     display: flex;
     flex-direction: column;
-    flex-basis: 300px;
     flex-shrink: 0;
     flex-grow: 0;
     max-width: 100%;
@@ -275,6 +281,14 @@ select {
     border-radius: 10px;
     overflow: hidden;
     margin: 1rem;
+}
+
+.card {
+    flex-basis: 30%;
+}
+
+.big-card {
+    flex-basis: 45%;
 }
 
 .card-img {
@@ -297,6 +311,7 @@ select {
 .card-title {
     font-size: 15px;
     font-weight: 700;
+    color: orangered;
 }
 
 .card-intro {
@@ -306,7 +321,63 @@ select {
 .card-group {
     width: 100%;
     display: flex;
-    align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+}
+
+.map {
+    width: 66%;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1rem;
+    padding: 1.5rem;
+}
+
+.map-title {
+    font-size: 20px;
+    text-align: center;
+    text-decoration: underline;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.map-display {
+    border: 3px solid #ccc;
+}
+
+.map-description {
+
+}
+
+
+.info-item {
+    align-items: center;
+    margin-bottom: 0.5rem;
+    display: flex;
+}
+
+.info-key {
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.info-value {
+
+}
+
+.info-color {
+    width: 20px; /* Ajustez la taille du cercle selon vos besoins */
+    height: 20px; /* Ajustez la taille du cercle selon vos besoins */
+    border-radius: 50%; /* Rend le div un cercle */
+    margin-right: 0.5rem; /* Ajustez l'espacement entre le cercle et le texte */
+    border: 3px solid #ccc; /* Ajoutez une bordure si nécessaire */
+}
+
+.bottom-legend {
+    font-size: 13px;
+    font-style: italic;
+    text-decoration: underline;
+    text-align: right;
 }
