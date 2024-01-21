@@ -3,6 +3,15 @@ from elasticsearch.helpers import bulk
 
 
 def generate_data(documents):
+    """
+        Generate data for bulk indexing.
+
+        Parameters:
+        - documents (list): List of documents to be indexed.
+
+        Yields:
+        dict: Document formatted for bulk indexing in Elasticsearch.
+        """
     for document in documents:
         yield {
             "_index": "movies",
@@ -12,6 +21,15 @@ def generate_data(documents):
 
 
 def count_per_field(field):
+    """
+        Count the number of occurrences for each value of a field in the index.
+
+        Parameters:
+        - field (str): The field for which to count occurrences.
+
+        Returns:
+        dict: Dictionary of occurrences for each value of the field.
+        """
     mapping = es_client.indices.get_mapping(index='movies')
     field_type = mapping['movies']['mappings']['properties'].get(field, {}).get('type', None)
     if field_type == 'text':
@@ -20,7 +38,7 @@ def count_per_field(field):
         field_to_search = field
 
     query = {
-        "size": 0,  # Utilisez 0 pour ne pas récupérer de documents, seulement les agrégations
+        "size": 0,
         "aggs": {
             "counts": {
                 "terms": {
@@ -38,7 +56,19 @@ def count_per_field(field):
 
 
 def search_movies(index_name, filters, page, page_size, order):
+    """
+        Search for movies in the Elasticsearch index based on specified filters.
 
+        Parameters:
+        - index_name (str): Name of the Elasticsearch index.
+        - filters (object): Object containing search filters.
+        - page (int): Page number.
+        - page_size (int): Number of items per page.
+        - order (str): Sorting order.
+
+        Returns:
+        tuple: Tuple containing search results (hits, total_hits, info).
+        """
     body_query = {
         "bool": {
             "must": {"wildcard": {"title": {"value": f"*{filters.title}*"}}},
@@ -79,6 +109,13 @@ def search_movies(index_name, filters, page, page_size, order):
 
 
 def create_index(es, documents):
+    """
+        Create a new Elasticsearch index and perform bulk indexing of documents.
+
+        Parameters:
+        - es: Elasticsearch client.
+        - documents (list): List of documents to be indexed.
+        """
     index_name = "movies"
 
     template_body = {
