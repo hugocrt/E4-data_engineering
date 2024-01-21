@@ -34,6 +34,7 @@ def database_page():
     hits, total_hits, search_details = search_movies('movies', filters, page, page_size, order)
 
     movie_data_list = [{key: value for key, value in hit['_source'].items()} for hit in hits]
+    print(movie_data_list)
 
     render_params = {
         'movie_data_list': movie_data_list,
