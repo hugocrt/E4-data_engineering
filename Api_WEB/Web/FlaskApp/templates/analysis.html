@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{% block h1 %}
+    Analyse
+{% endblock %}{% endblock %}
+
+{% block body %}
+<div class="card-group">
+    <div class="big-card">
+        <h1 class="card-title">DURÉE DES FILMS</h1>
+        <img src="{{ url_for('static', filename='img/duration_hist.png') }}" alt="duration histogram">
+        <div class="card-body">
+            <h1 class="card-title">Analyse rapide</h1>
+            <p>
+                Il y a <b>{{percent_inf150_movies}}%</b> des films qui ont une <b>durée inférieure à
+                2h 30 min</b>. La distribution a un fort pic entre <b>1 h 30 min et 1 h 50 min</b>.
+                Il y a donc un grand intérêt pour les <b>films de durées moyennes</b>, même s'il y
+                a des temps surprenants comme un film de <b>12 h 29 min</b> ce qui laisse place à
+                tous styles de films.
+            </p>
+        </div>
+    </div>
+
+    <div class="big-card">
+        <h1 class="card-title">ANNÉES DE PARUTION</h1>
+        <img src="{{ url_for('static', filename='img/year_hist.png') }}" alt="year histogram">
+        <div class="card-body">
+            <h1 class="card-title">Analyse rapide</h1>
+            <p>
+                Le premier film date de <b>1902</b>, le dernier de <b>2015</b> (bien que le top ait
+                été mis à jour en <b>janvier 2024</b>) et couvre donc pratiquement la <b>totalité de
+                l'histoire du cinéma</b> (puisque pratiqué depuis <b>1895</b>). La plage d'années est
+                <b>assez
+                bien repartie</b>,
+                il y a forcément <b>moins de films avant les années 50</b>, car le cinéma était
+                moins développé que de nos jours. Il y a une <b>forte présence</b> dans ce top pour
+                les films sortis entre les <b>années 60 et 75</b>. Enfin, il y a une <b>chute à
+                partir des années 2000</b>, suggérant ainsi que les films récents sont moins
+                appréciés de manière générale.
+            </p>
+        </div>
+    </div>
+
+    <div class="big-card">
+        <h1 class="card-title">GENRES</h1>
+        <img src="{{ url_for('static', filename='img/genres_piechart.png') }}" alt="genres Boxplot">
+        <div class="card-body">
+            <h1 class="card-title">Analyse rapide</h1>
+            <p>
+                Il y a <b>{{tot_genres}}</b> genres différents. Le <B>genre prédominant</B> est le
+                <b><i>Drame</i></b>, il apparaît dans <B>31%</B> des films et semble donc être le
+                genre favori. À noter qu'un film peut disposer de plusieurs genres. En dehors du
+                Drame, tous les genres paraissent être appréciés avec même des genres comme le
+                <b><i>Muet</i></b> qui ne sont pourtant pas très grand public. Cela montre ainsi
+                que le cinéma en tant que forme d'art est apprécié dans <b>toute sa diversité</b>,
+                des drames émotionnels aux expérimentations audacieuses.
+            </p>
+        </div>
+    </div>
+
+    <div class="big-card">
+        <h1 class="card-title">RÉALISATEURS</h1>
+        <div class="card-body">
+            <h1 class="card-title">Réalisateurs notables (TOP 15)</h1>
+            {% for director, count in top15_dir.items() %}
+                <div class="info-item">
+                    <div class="info-key">
+                        {{ director }}
+                    </div>
+                    <div class="info-value">
+                        {{ count }} apparitions
+                    </div>
+                    <br>
+                </div>
+            {% endfor %}
+            <h1 class="card-title">Analyse rapide</h1>
+            <p>
+                Au sein de ce groupe éminent de réalisateurs, chacun a <b>profondément influencé</b>
+                le <b>cinéma</b>. Prenons <b><i>Martin Scorsese</i></b>, un maître contemporain,
+                dont des chefs-d'œuvre tels que <i>"Taxi Driver"</i> et <i>"Raging Bull"</i> ont
+                redéfini le paysage cinématographique en explorant la psyché humaine de manière
+                provocante. Son approche distinctive envers la réalisation a solidifié sa réputation
+                en tant que cinéaste novateur, laissant une empreinte indélébile sur l'industrie
+                cinématographique. <b>Chaque réalisateur</b> de cette liste a <b>contribué de manière
+                significative</b> à l'évolution et à la diversification de l'<b>art cinématographique</b>,
+                il est donc tout à fait logique de les retrouver ici.
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

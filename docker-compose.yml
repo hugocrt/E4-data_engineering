@@ -1,0 +1,56 @@
+version: '3'
+services:
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/mongo:/data/db
+    ports:
+      - "27017:27017"
+
+  scraping:
+    container_name: scraping
+    build:
+      context: ./Scraping
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    volumes:
+      - ./Scraping:/app
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017/"
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+
+  api_web:
+    container_name: api_web
+    build:
+      context: ./Api_WEB
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - scraping
+      - elasticsearch
+#    command: [ "sh", "-c", "while [ ! -f /app/done ]; do sleep 1; done && python root.py" ]
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

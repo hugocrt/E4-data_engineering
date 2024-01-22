@@ -34,7 +34,7 @@ class MongoPipeline(object):
     collection_name = 'movies'
 
     def open_spider(self, spider):
-        self.client = pymongo.MongoClient()
+        self.client = pymongo.MongoClient('mongodb://localhost:27017')
         self.db = self.client['senscritique']
 
     def close_spider(self, spider):

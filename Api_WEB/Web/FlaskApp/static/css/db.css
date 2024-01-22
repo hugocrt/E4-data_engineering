@@ -1,0 +1,166 @@
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.form-group {
+    display: grid;
+    grid-template-columns: 2fr;
+    align-items: center;
+}
+
+.navigation_button {
+    max-width: 40px;
+    max-height: 40px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.navigation_button:hover{
+    transform: scale(1.1);
+}
+
+.navigation_button a {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+
+.navigation_buttons {
+    text-align: center;
+}
+
+.pagination{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.searchbar_label {
+    font-style: oblique;
+    font-size: small;
+}
+
+.search-button {
+    margin-left: auto;
+    margin-top: 15px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-form label {
+    justify-self: center;
+    font-size: small;
+}
+
+.search-info {
+    margin-left: 2%;
+    text-align: left;
+    font-size: small;
+    font-style: italic;
+}
+
+.top-filter{
+    display: flex;
+    align-items: center;
+    vertical-align: center;
+    justify-content: space-evenly;
+}
+
+.inline-dropdown form {
+    display: flex;
+    align-items: center;
+}
+
+
+.clear {
+    color: dimgrey;
+}
+
+.arrow {
+    display: inline-block;
+    margin-left: 5px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.menu-section {
+    margin-bottom: 60px;
+}
+
+.section-header {
+    color: orangered;
+    font-weight: bold;
+    background-color: transparent;
+    cursor: pointer;
+    position: sticky;
+}
+
+.section-content {
+    display: none;
+    padding: 5px;
+    overflow-y: auto;
+    max-height: 200px;
+    margin-bottom: 10px;
+}
+
+.section-content label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.menu-section.active .arrow {
+    transform: rotateX(180deg);
+}
+
+.left-side-filter {
+    width: 25%;
+    padding: 0 30px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.modern-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    margin-bottom: 50px;
+}
+
+.modern-button:hover {
+    background-color: #45a049;
+}
+
+.movies-wrapper {
+    width: 75%;
+    padding: 0 30px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.clear {
+    display: flex;
+}
+
+.clear-button {
+    padding-left: 10px;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.button {
+    max-width: 20px;
+    max-height: 20px;
+    vertical-align: middle;
+    display: inline-block;
+}
