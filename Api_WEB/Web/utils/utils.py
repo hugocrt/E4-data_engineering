@@ -22,7 +22,7 @@ class Filters(object):
 
 def connect_to_mongodb(flaskapp):
     try:
-        flaskapp.config['MONGO_URI'] = 'mongodb://localhost:27017/senscritique'
+        flaskapp.config['MONGO_URI'] = 'mongodb://mongo:27017/senscritique'
         mongo = PyMongo(flaskapp)
         collection = mongo.db.movies
         return collection

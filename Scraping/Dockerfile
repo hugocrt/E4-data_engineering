@@ -2,11 +2,10 @@
 FROM python:3.11.5
 
 # Définissez le répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR .
 
 # Copiez les fichiers nécessaires dans le conteneur
-COPY Pipfile Pipfile.lock /app/
-COPY Scraping /app/Scraping/
+COPY . .
 
 # Installez les dépendances
 RUN pip install pipenv && pipenv install --deploy --ignore-pipfile

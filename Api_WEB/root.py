@@ -1,4 +1,4 @@
 from Web.FlaskApp import routes
 
-print('flask app running now on localhost:5000')
-routes.app.run()
+print('flask app running')
+routes.app.run(host='0.0.0.0')
