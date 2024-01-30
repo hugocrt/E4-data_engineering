@@ -57,7 +57,7 @@ terminal :
 ```bash 
 $ git clone https://github.com/hugocrt/data_engineering_e4_project
 ```
-![cloning project](img/cloning-project.png)
+![cloning project](img/cloning-project.png)<br>
 ⚠ Attendez l'importation totale du projet ⚠
 
 ## 2 - Lancer le projet
